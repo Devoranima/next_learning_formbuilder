@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 
 const VisitBtn = ({shareUrl} : {shareUrl: string}) => {
   const [mounted, setMounted] = useState(false)
+
   const shareLink = `${window.location.origin}/submit/${shareUrl}`
   useEffect(()=>{
     setMounted(true);

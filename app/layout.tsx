@@ -10,8 +10,8 @@ import NextTopLoader from 'nextjs-toploader'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'OMG',
-  description: 'Kill me',
+  title: 'FormBuilder',
+  description: 'idk',
 }
 
 export default function RootLayout({

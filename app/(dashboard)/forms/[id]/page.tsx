@@ -89,9 +89,15 @@ const SubmissionsTable = async ({id} : {id: number}) => {
   const form = await getFormWithSubmissions(id);
 
   if(!form) throw new Error(`Form not found`);
-
+  
+  if (form.FormSubmissions.length === 0){
+    return (
+      <div className="container">
+        <h1 className="text-2xl font-bold">No submissions yet</h1>
+      </div>
+    );
+  }
   const formElements = JSON.parse(form.content) as FormElementInstance[];
-
   const columns: {
     id: string;
     label: string;
