@@ -35,7 +35,7 @@ const FormDetailPage = async ({params}:{params: {id:string}}) => {
           <FormLinkShare shareUrl={form.shareUrl}/>
         </div>
       </div>
-      <div className="w-full pt-8 gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 container">
+      <div className="w-full pt-8 gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 container">
         <StatsCard 
           title="Total visits" 
           icon={<LuView className="text-red-600"/>}
@@ -108,6 +108,30 @@ const SubmissionsTable = async ({id} : {id: number}) => {
   formElements.forEach((element) => {
     switch (element.type) {
       case 'TextField':
+        columns.push({
+          id: element.id,
+          label: element.extraAttributes?.label,
+          required: element.extraAttributes?.required,
+          type: element.type
+        })
+        break;
+      case 'NumberField':
+        columns.push({
+          id: element.id,
+          label: element.extraAttributes?.label,
+          required: element.extraAttributes?.required,
+          type: element.type
+        })
+        break;
+      case 'TextareaField':
+        columns.push({
+          id: element.id,
+          label: element.extraAttributes?.label,
+          required: element.extraAttributes?.required,
+          type: element.type
+        })
+        break;
+      case 'DateField':
         columns.push({
           id: element.id,
           label: element.extraAttributes?.label,

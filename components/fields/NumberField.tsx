@@ -1,6 +1,5 @@
 "use client"
 
-import { MdTextFields } from "react-icons/md"
 import { ElementsType, FormElementInstance, FormElementType, SubmitValueFunctionType } from "../FormElements"
 import { Label } from "../ui/label"
 import { Input } from "../ui/input"
@@ -20,15 +19,16 @@ import {
 } from '../ui/form'
 import { Switch } from "../ui/switch"
 import { cn } from "@/lib/utils"
+import { Bs123 } from "react-icons/bs"
 
-const type: ElementsType = "TextField"
+const type: ElementsType = "NumberField"
 
 
 const extraAttributes = {
-  label: 'Text Field',
+  label: 'Number Field',
   helperText: 'Helper Text',
   required: false,
-  placeHolder: "Placeholder..."
+  placeHolder: "0"
 }
 
 type propertiesSchemaType = zod.infer<typeof propertiesSchema>
@@ -40,7 +40,7 @@ const propertiesSchema = zod.object({
   placeHolder: zod.string().max(40),
 })
 
-export const TextFieldElement: FormElementType = {
+export const NumberFieldFormElement: FormElementType = {
   type,
   construct: (id: string) => ({
     id,
@@ -48,8 +48,8 @@ export const TextFieldElement: FormElementType = {
     extraAttributes
   }),
   designerBtnElement:{
-    icon: MdTextFields,
-    label: "Text Field"
+    icon: Bs123,
+    label: 'Number Field',
   },
   designerComponent: DesignerComponent,
   formComponent: FormComponent,
@@ -76,7 +76,7 @@ function DesignerComponent({elementInstance} : {elementInstance: FormElementInst
       {label} 
       {required && '*'}
     </Label>
-    <Input readOnly disabled placeholder={placeHolder}/>
+    <Input readOnly disabled type="number" placeholder={placeHolder}/>
     {helperText &&
       <p className="text-muted-foreground text-[0.8rem]">
         {helperText}
@@ -145,6 +145,7 @@ function PropertiesComponent({elementInstance} : {elementInstance: FormElementIn
               <FormControl>
                 <Input 
                   {...field}
+                  type="number"
                   onKeyDown={(e)=>{
                     if(e.key === 'Enter') e.currentTarget.blur();
                   }}
@@ -233,16 +234,21 @@ function FormComponent ({
       {label} 
       {required && '*'}
     </Label>
-    <Input value={value} placeholder={placeHolder} required={required} onChange={(e)=>{
-      setValue(e.currentTarget.value)
-    }}
-    onBlur={(e)=>{
-      if (!submitValue) return;
-      const valid = TextFieldElement.validate(element, e.target.value);
-      setError(!valid);
-      if(!valid) return;
-      submitValue(element.id, e.target.value);
-    }}
+    <Input 
+      type="number"
+      value={value} 
+      placeholder={placeHolder} 
+      required={required} 
+      onChange={(e)=>{
+        setValue(e.currentTarget.value)
+      }}
+      onBlur={(e)=>{
+        if (!submitValue) return;
+        const valid = NumberFieldFormElement.validate(element, e.target.value);
+        setError(!valid);
+        if(!valid) return;
+        submitValue(element.id, e.target.value);
+      }}
     />
     {helperText &&
       <p className={cn("text-muted-foreground text-[0.8rem]", error && "text-red-500")}>

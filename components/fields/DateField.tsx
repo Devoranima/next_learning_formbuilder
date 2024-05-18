@@ -20,15 +20,20 @@ import {
 } from '../ui/form'
 import { Switch } from "../ui/switch"
 import { cn } from "@/lib/utils"
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
+import { Button } from "../ui/button"
+import { CalendarIcon } from "@radix-ui/react-icons"
+import { format } from "date-fns"
+import { Calendar } from "../ui/calendar"
 
-const type: ElementsType = "TextField"
+const type: ElementsType = "DateField"
 
 
 const extraAttributes = {
-  label: 'Text Field',
+  label: 'Date Field',
   helperText: 'Helper Text',
   required: false,
-  placeHolder: "Placeholder..."
+  //placeHolder: "Pick a date"
 }
 
 type propertiesSchemaType = zod.infer<typeof propertiesSchema>
@@ -37,10 +42,10 @@ const propertiesSchema = zod.object({
   label: zod.string().min(2).max(40),
   helperText: zod.string().max(200),
   required: zod.boolean().default(false),
-  placeHolder: zod.string().max(40),
+  //placeHolder: zod.string(),
 })
 
-export const TextFieldElement: FormElementType = {
+export const DateFieldElement: FormElementType = {
   type,
   construct: (id: string) => ({
     id,
@@ -49,7 +54,7 @@ export const TextFieldElement: FormElementType = {
   }),
   designerBtnElement:{
     icon: MdTextFields,
-    label: "Text Field"
+    label: "Date Field"
   },
   designerComponent: DesignerComponent,
   formComponent: FormComponent,
@@ -70,13 +75,13 @@ type customInstance = FormElementInstance & {
 
 function DesignerComponent({elementInstance} : {elementInstance: FormElementInstance}){
   const element = elementInstance as customInstance;
-  const {label, required, placeHolder, helperText} = element.extraAttributes
+  const {label, required, helperText} = element.extraAttributes
   return <div className="flex flex-col gap-2 w-full">
     <Label>
       {label} 
       {required && '*'}
     </Label>
-    <Input readOnly disabled placeholder={placeHolder}/>
+    {/*<Input readOnly disabled placeholder={placeHolder}/>*/}
     {helperText &&
       <p className="text-muted-foreground text-[0.8rem]">
         {helperText}
@@ -136,7 +141,7 @@ function PropertiesComponent({elementInstance} : {elementInstance: FormElementIn
             </FormItem>
           )}
         />
-        <FormField
+        {/*<FormField
           control={form.control}
           name="placeHolder"
           render={({field}) => (
@@ -156,7 +161,7 @@ function PropertiesComponent({elementInstance} : {elementInstance: FormElementIn
               <FormMessage/>
             </FormItem>
           )}
-        />
+        />*/}
         <FormField
           control={form.control}
           name="helperText"
@@ -218,10 +223,10 @@ function FormComponent ({
   defaultValue?: string
 }){
   const element = elementInstance as customInstance;
-  const {label, required, placeHolder, helperText} = element.extraAttributes
+  const {label, required, helperText} = element.extraAttributes
 
 
-  const [value, setValue] = useState(defaultValue || '');
+  const [value, setValue] = useState<Date | null>(null);
   const [error, setError] = useState(false);
 
   useEffect(()=>{
@@ -233,17 +238,49 @@ function FormComponent ({
       {label} 
       {required && '*'}
     </Label>
-    <Input value={value} placeholder={placeHolder} required={required} onChange={(e)=>{
-      setValue(e.currentTarget.value)
-    }}
-    onBlur={(e)=>{
-      if (!submitValue) return;
-      const valid = TextFieldElement.validate(element, e.target.value);
-      setError(!valid);
-      if(!valid) return;
-      submitValue(element.id, e.target.value);
-    }}
-    />
+    {/*<Input 
+      value={value} required={required}
+      onBlur={(e)=>{
+        if (!submitValue) return;
+        const valid = DateFieldElement.validate(element, e.target.value);
+        setError(!valid);
+        if(!valid) return;
+        submitValue(element.id, e.target.value);
+      }}
+    />*/}
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant={"outline"}
+          className={cn(
+            "w-[280px] justify-start text-left font-normal",
+            !value && "text-muted-foreground"
+          )}
+        >
+          <CalendarIcon className="mr-2 h-4 w-4"/>
+          {value ? format(value, "PPP") : "Pick a date"}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0">
+        <Calendar
+          mode="single"
+          selected={value ?? new Date()}
+          onSelect={(e)=>{
+            if (!e) return;
+            setValue(e)
+          }}
+          initialFocus
+          onDayBlur={(e)=>{
+            if (!submitValue) return;
+            if (!e) return;
+            const valid = DateFieldElement.validate(element, format(e, "PPP"));
+            setError(!valid);
+            if(!valid) return;
+            submitValue(element.id, format(e, "PPP"));
+          }}
+        />
+      </PopoverContent>
+    </Popover>
     {helperText &&
       <p className={cn("text-muted-foreground text-[0.8rem]", error && "text-red-500")}>
         {helperText}

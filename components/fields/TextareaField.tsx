@@ -1,6 +1,6 @@
 "use client"
 
-import { MdTextFields } from "react-icons/md"
+
 import { ElementsType, FormElementInstance, FormElementType, SubmitValueFunctionType } from "../FormElements"
 import { Label } from "../ui/label"
 import { Input } from "../ui/input"
@@ -20,12 +20,14 @@ import {
 } from '../ui/form'
 import { Switch } from "../ui/switch"
 import { cn } from "@/lib/utils"
+import { AutosizeTextarea } from "../ui/autosizetextarea"
+import { BsTextareaResize } from "react-icons/bs"
 
-const type: ElementsType = "TextField"
+const type: ElementsType = "TextareaField"
 
 
 const extraAttributes = {
-  label: 'Text Field',
+  label: 'Textarea Field',
   helperText: 'Helper Text',
   required: false,
   placeHolder: "Placeholder..."
@@ -37,10 +39,10 @@ const propertiesSchema = zod.object({
   label: zod.string().min(2).max(40),
   helperText: zod.string().max(200),
   required: zod.boolean().default(false),
-  placeHolder: zod.string().max(40),
+  placeHolder: zod.string().max(500),
 })
 
-export const TextFieldElement: FormElementType = {
+export const TextareaFieldElement: FormElementType = {
   type,
   construct: (id: string) => ({
     id,
@@ -48,8 +50,8 @@ export const TextFieldElement: FormElementType = {
     extraAttributes
   }),
   designerBtnElement:{
-    icon: MdTextFields,
-    label: "Text Field"
+    icon: BsTextareaResize,
+    label: "Textarea Field"
   },
   designerComponent: DesignerComponent,
   formComponent: FormComponent,
@@ -76,7 +78,11 @@ function DesignerComponent({elementInstance} : {elementInstance: FormElementInst
       {label} 
       {required && '*'}
     </Label>
-    <Input readOnly disabled placeholder={placeHolder}/>
+    <AutosizeTextarea 
+      readOnly 
+      disabled 
+      placeholder={placeHolder}
+    />
     {helperText &&
       <p className="text-muted-foreground text-[0.8rem]">
         {helperText}
@@ -143,7 +149,7 @@ function PropertiesComponent({elementInstance} : {elementInstance: FormElementIn
             <FormItem>
               <FormLabel>PlaceHolder</FormLabel>
               <FormControl>
-                <Input 
+                <AutosizeTextarea 
                   {...field}
                   onKeyDown={(e)=>{
                     if(e.key === 'Enter') e.currentTarget.blur();
@@ -233,12 +239,12 @@ function FormComponent ({
       {label} 
       {required && '*'}
     </Label>
-    <Input value={value} placeholder={placeHolder} required={required} onChange={(e)=>{
+    <AutosizeTextarea value={value} placeholder={placeHolder} required={required} onChange={(e)=>{
       setValue(e.currentTarget.value)
     }}
     onBlur={(e)=>{
       if (!submitValue) return;
-      const valid = TextFieldElement.validate(element, e.target.value);
+      const valid = TextareaFieldElement.validate(element, e.target.value);
       setError(!valid);
       if(!valid) return;
       submitValue(element.id, e.target.value);

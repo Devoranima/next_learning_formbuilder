@@ -3,12 +3,18 @@ import { TextFieldElement } from './fields/TextField';
 import { TitleFieldElement } from './fields/TitleField';
 import { ParagraphFieldElement } from './fields/ParagraphField';
 import { SeparatorFieldElement } from './fields/SeparatorField';
+import { NumberFieldFormElement } from './fields/NumberField';
+import { TextareaFieldElement } from './fields/TextareaField';
+import { DateFieldElement } from './fields/DateField';
 
 export type ElementsType = 
 "TextField" | 
 "TitleField" | 
 "ParagraphField" | 
-"SeparatorField";
+"SeparatorField" | 
+"NumberField" | 
+"TextareaField" | 
+"DateField";
 
 export type SubmitValueFunctionType = (key: string, value: string)=>void;
 
@@ -39,7 +45,7 @@ export type FormElementType = {
 
 export type FormElementInstance = {
   id: string;
-  type:ElementsType;
+  type: ElementsType;
   extraAttributes?: Record<string, any>
 }
 
@@ -51,5 +57,8 @@ export const FormElements: FormElementsType = {
   TextField: TextFieldElement,
   TitleField: TitleFieldElement,
   ParagraphField: ParagraphFieldElement,
-  SeparatorField: SeparatorFieldElement
+  SeparatorField: SeparatorFieldElement,
+  NumberField: NumberFieldFormElement,
+  TextareaField: TextareaFieldElement,
+  DateField: DateFieldElement
 }; 
